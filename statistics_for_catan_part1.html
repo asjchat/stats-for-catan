@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statistics for Catan — Part I: The Engine of the Game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Source+Sans+3:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --body-bg: #ffffff;
+  --text: #1a1a1a;
+  --muted: #555;
+  --border: #d0d0d0;
+  --accent: #8b1a1a;
+  --link: #2a4a7f;
+  --sidebar-bg: #f5f5f5;
+  --sidebar-w: 240px;
+  --code-bg: #f0f0f0;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: 'Source Serif 4', Georgia, serif;
+  background: var(--body-bg);
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top: 0; left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 2rem 0 3rem;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82rem;
+  z-index: 100;
+}
+#sidebar .toc-book-title {
+  padding: 0 1.1rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+  line-height: 1.4;
+  font-weight: 400;
+}
+#sidebar .toc-book-title strong {
+  display: block;
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+.toc-section-label {
+  padding: 0.6rem 1.1rem 0.2rem;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #999;
+  font-weight: 600;
+}
+.toc-section-label.first { padding-top: 0.2rem; }
+.toc-entry {
+  display: block;
+  padding: 0.25rem 1.1rem;
+  color: var(--text);
+  text-decoration: none;
+  line-height: 1.4;
+}
+.toc-entry:hover { background: #e8e8e8; color: var(--accent); }
+.toc-entry.active { background: #e0e0e0; font-weight: 600; }
+.toc-entry.pending {
+  color: #aaa;
+  cursor: default;
+  font-style: italic;
+}
+.toc-entry.pending:hover { background: none; color: #aaa; }
+.toc-ch { font-size: 0.75rem; color: #999; margin-right: 0.25rem; }
+.toc-divider { border: none; border-top: 1px solid var(--border); margin: 0.8rem 1.1rem; }
+.toc-wip-note {
+  padding: 0.2rem 1.1rem 0.5rem;
+  font-size: 0.70rem;
+  color: #aaa;
+  font-style: italic;
+}
+
+/* ── MAIN CONTENT ── */
+#main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  max-width: 960px;
+  padding: 3rem 2rem 6rem 3rem;
+  line-height: 1.8;
+  font-size: 1.0125rem;
+}
+
+/* ── FRONT MATTER ── */
+.fm-title-block {
+  border-bottom: 2px solid var(--text);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+.fm-series {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.7rem;
+}
+.fm-title {
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 0.3rem;
+}
+.fm-subtitle {
+  font-size: 1.15rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+.fm-part-badge {
+  display: inline-block;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: var(--text);
+  color: #fff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 2px;
+  margin-bottom: 0.8rem;
+}
+.fm-author {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.9rem;
+  margin-top: 0.8rem;
+}
+.fm-author span { font-weight: 600; }
+
+/* ── DEDICATION ── */
+.dedication {
+  margin: 2.5rem 0 3rem;
+  padding: 1.5rem 2rem;
+  border-left: 3px solid var(--border);
+  font-style: italic;
+  color: var(--muted);
+  font-size: 1.0rem;
+  line-height: 1.7;
+}
+
+/* ── SECTION HEADINGS ── */
+.section-head {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.4rem;
+  margin-bottom: 1.2rem;
+  margin-top: 3rem;
+}
+.section-head:first-of-type { margin-top: 0; }
+
+h2.preface-heading {
+  font-size: 1.55rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+h2.about-heading {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+/* ── PART HEADER ── */
+.part-header {
+  margin: 3rem 0 2rem;
+  padding: 1.4rem 0;
+  border-top: 2px solid var(--text);
+  border-bottom: 1px solid var(--border);
+}
+.part-header .part-num {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+.part-header h2 {
+  font-size: 1.85rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+.part-header p {
+  font-style: italic;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* ── CHAPTERS ── */
+.chapter { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+.chapter-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+.chapter h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: 1.2rem; line-height: 1.2; }
+.chapter h3 {
+  font-size: 1.1rem; font-weight: 600;
+  margin: 2rem 0 0.6rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--border);
+}
+.chapter p { margin-bottom: 1rem; }
+
+/* ── MATH ── */
+.math-block {
+  background: var(--code-bg);
+  border-left: 3px solid #888;
+  padding: 0.7rem 1rem;
+  margin: 1.1rem 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.87rem;
+  border-radius: 0 3px 3px 0;
+  overflow-x: auto;
+  color: #1a1a1a;
+}
+
+/* ── FIGURES ── */
+.figure {
+  margin: 1.8rem 0;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.figure-body { background: #fff; }
+.figure-caption {
+  background: #f8f8f8;
+  border-top: 1px solid var(--border);
+  padding: 0.5rem 0.85rem;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--muted);
+  font-family: 'Source Sans 3', sans-serif;
+}
+
+/* ── TABLES ── */
+.data-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 0.88rem;
+  font-family: 'Source Sans 3', sans-serif;
+}
+.data-table th {
+  background: #1a1a1a; color: #fff;
+  padding: 0.5rem 0.85rem;
+  text-align: left; font-weight: 500;
+  font-size: 0.78rem; letter-spacing: 0.04em;
+}
+.data-table td {
+  padding: 0.45rem 0.85rem;
+  border-bottom: 1px solid #e8e8e8;
+}
+.data-table tr:nth-child(even) td { background: #fafafa; }
+.data-table td.center, .data-table th.center { text-align: center; }
+.data-table td.hi { background: #fff8e8 !important; font-weight: 600; }
+.data-table td.red { color: var(--accent); font-weight: 600; }
+
+/* ── BOARD ── */
+.board-wrap { display: flex; justify-content: center; padding: 1.2rem 1rem; background: #fafafa; }
+
+/* ── CALLOUT ── */
+.callout {
+  background: #fafafa;
+  border: 1px solid #ccc;
+  border-left: 3px solid #888;
+  padding: 0.9rem 1.1rem;
+  margin: 1.4rem 0;
+  font-size: 0.93rem;
+  border-radius: 0 3px 3px 0;
+}
+
+/* print / mobile */
+@media(max-width:700px){
+  #sidebar { display: none; }
+  #main { margin-left: 0; padding: 1.5rem 1.2rem 4rem; }
+}
+@media print {
+  #sidebar { display: none; }
+  #main { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+
+<nav id="sidebar" aria-label="Table of contents">
+  <div class="toc-book-title">
+    <strong>Statistics for Catan</strong>
+  </div>
+
+  <div class="toc-section-label first">Front Matter</div>
+  <a class="toc-entry" href="#preface">Preface</a>
+  <a class="toc-entry" href="#about">About the Author</a>
+
+  <hr class="toc-divider">
+  <div class="toc-section-label">Part I — The Engine of the Game</div>
+  <a class="toc-entry" href="#ch1"><span class="toc-ch">1.</span> The Dice Controls Everything</a>
+  <a class="toc-entry" href="#ch2"><span class="toc-ch">2.</span> Randomness &amp; Expected Value</a>
+  <a class="toc-entry" href="#ch3"><span class="toc-ch">3.</span> Long-Run vs. Short-Run Thinking</a>
+
+  <hr class="toc-divider">
+  <div class="toc-section-label">Part II — Settlement Mathematics</div>
+  <a class="toc-entry pending" tabindex="-1">Writing in progress&hellip;</a>
+  <div class="toc-wip-note">To be published soon</div>
+
+  <hr class="toc-divider">
+  <div class="toc-section-label">Part III — Resource Flow &amp; Economics</div>
+  <a class="toc-entry pending" tabindex="-1">Writing in progress&hellip;</a>
+  <div class="toc-wip-note">To be published soon</div>
+
+  <hr class="toc-divider">
+  <div class="toc-section-label">Part IV — The Robber</div>
+  <a class="toc-entry pending" tabindex="-1">Writing in progress&hellip;</a>
+  <div class="toc-wip-note">To be published soon</div>
+
+  <hr class="toc-divider">
+  <div class="toc-section-label">Part V — Multiplayer Dynamics</div>
+  <a class="toc-entry pending" tabindex="-1">Writing in progress&hellip;</a>
+  <div class="toc-wip-note">To be published soon</div>
+
+  <hr class="toc-divider">
+  <div class="toc-section-label">Part VI — Map &amp; Positional Strategy</div>
+  <a class="toc-entry pending" tabindex="-1">Writing in progress&hellip;</a>
+  <div class="toc-wip-note">To be published soon</div>
+</nav>
+
+<main id="main">
+
+<!-- TITLE BLOCK -->
+<div class="fm-title-block">
+  <div class="fm-series">Statistics for Catan</div>
+  <div class="fm-part-badge">Part I</div>
+  <h1 class="fm-title">The Engine of the Game</h1>
+  <div class="fm-subtitle">Probability, Dice, and the Expected-Value Framework</div>
+  <div class="fm-author">By <span>Ananda Chatterjee</span></div>
+</div>
+
+<!-- DEDICATION -->
+<div class="dedication" id="dedication">
+  <p>Dedicated to my mom and dad.</p>
+</div>
+
+<!-- PREFACE -->
+<div class="section-head" id="preface">Preface</div>
+<h2 class="preface-heading">Why I Wrote This</h2>
+<p>What really motivated me to write this book was to guide my friends who tend to lose to me really consistently, just kidding.</p>
+<p>What genuinely sparked this project was enrolling in my first probability theory course and discovering, almost immediately, that my favorite board game was a living laboratory for everything I was studying. Expected value, variance, the law of large numbers, conditional probability - concepts I was encountering as abstract formulas turned out to have direct, concrete applications every single time two dice hit the table. That realization made both the coursework and the game more compelling, and this text is my attempt to share that connection.</p>
+<p>You do not need a statistics background but you do need to know the rules of Catan. Part I covers the pure mathematics of the dice and the expected-value reasoning that should underlie every decision. Subsequent parts extend this framework to settlement placement, resource economics, the robber, multiplayer game theory, and positional strategy.</p>
+
+<!-- ABOUT -->
+<div class="section-head" id="about">About the Author</div>
+<h2 class="about-heading">Ananda Chatterjee</h2>
+<p>Ananda is a Statistics major at the University of Florida. He has been playing Catan since his junior year of high school and has loved the game ever since.</p>
+
+<!-- PART I -->
+<div class="part-header" id="part1">
+  <div class="part-num">Part I</div>
+  <h2>The Engine of the Game</h2>
+  <p>Pure mathematics of dice, probability, and the expected-value framework that underpins every decision.</p>
+</div>
+
+<!-- CHAPTER 1 -->
+<div class="chapter" id="ch1">
+  <div class="chapter-label">Chapter 1</div>
+  <h2>The Dice Controls Everything</h2>
+  <p>Every resource in Catan originates from a single mechanical event: two six-sided dice are rolled, their values summed, and hexagonal terrain tiles whose number tokens match that sum produce one resource card for each adjacent settlement (and two for each adjacent city). This seems simple. It is, in fact, a deep probabilistic structure that governs the entire game, and understanding it precisely is the first task of the mathematical Catan player.</p>
+
+  <h3>The Sample Space of Two Dice</h3>
+  <p>When you roll one fair six-sided die, the sample space contains 6 equally likely outcomes: {1, 2, 3, 4, 5, 6}. When you roll two dice, the combined sample space contains 6 &times; 6 = 36 equally likely ordered pairs, from (1,1) to (6,6). The sum of two dice ranges from 2 to 12, but crucially, the sums are not equally likely. The number of ways to achieve each sum determines its probability.</p>
+
+  <div class="figure" id="fig1_1">
+    <div class="figure-body"><div class="board-wrap">
+<svg viewBox="0 0 580 260" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;display:block;margin:0 auto">
+<rect width="580" height="260" fill="#fff"/>
+<line x1="41" y1="171.7" x2="545" y2="171.7" stroke="#ddd" stroke-width="1"/>
+<text x="37" y="175.7" text-anchor="end" fill="#888" font-size="11" font-family="Source Sans 3,sans-serif">1</text>
+<line x1="41" y1="143.3" x2="545" y2="143.3" stroke="#ddd" stroke-width="1"/>
+<text x="37" y="147.3" text-anchor="end" fill="#888" font-size="11" font-family="Source Sans 3,sans-serif">2</text>
+<line x1="41" y1="115.0" x2="545" y2="115.0" stroke="#ddd" stroke-width="1"/>
+<text x="37" y="119.0" text-anchor="end" fill="#888" font-size="11" font-family="Source Sans 3,sans-serif">3</text>
+<line x1="41" y1="86.7" x2="545" y2="86.7" stroke="#ddd" stroke-width="1"/>
+<text x="37" y="90.7" text-anchor="end" fill="#888" font-size="11" font-family="Source Sans 3,sans-serif">4</text>
+<line x1="41" y1="58.3" x2="545" y2="58.3" stroke="#ddd" stroke-width="1"/>
+<text x="37" y="62.3" text-anchor="end" fill="#888" font-size="11" font-family="Source Sans 3,sans-serif">5</text>
+<line x1="41" y1="30.0" x2="545" y2="30.0" stroke="#ddd" stroke-width="1"/>
+<text x="37" y="34.0" text-anchor="end" fill="#888" font-size="11" font-family="Source Sans 3,sans-serif">6</text>
+<text x="14" y="140" text-anchor="middle" fill="#666" font-size="10" font-family="Source Sans 3,sans-serif" transform="rotate(-90,14,140)">Combinations</text>
+<text x="298" y="255" text-anchor="middle" fill="#666" font-size="11" font-family="Source Sans 3,sans-serif">Dice Sum</text>
+<rect x="45" y="171.7" width="36" height="28.3" fill="#5b8db8" rx="2"/>
+<text x="63" y="167.7" text-anchor="middle" fill="#5b8db8" font-size="9" font-family="Source Sans 3,sans-serif" font-weight="600">1/36</text>
+<text x="63" y="215" text-anchor="middle" fill="#333" font-size="13" font-family="Source Serif 4,serif" font-weight="700">2</text>
+<text x="63" y="227" text-anchor="middle" fill="#aaa" font-size="9" font-family="Source Sans 3,sans-serif">2.8%</text>
+<rect x="91" y="143.3" width="36" height="56.7" fill="#5b8db8" rx="2"/>
+<text x="109" y="139.3" text-anchor="middle" fill="#5b8db8" font-size="9" font-family="Source Sans 3,sans-serif" font-weight="600">2/36</text>
+<text x="109" y="215" text-anchor="middle" fill="#333" font-size="13" font-family="Source Serif 4,serif" font-weight="700">3</text>
+<text x="109" y="227" text-anchor="middle" fill="#aaa" font-size="9" font-family="Source Sans 3,sans-serif">5.6%</text>
+<rect x="137" y="115.0" width="36" height="85.0" fill="#5b8db8" rx="2"/>
+<text x="155" y="111.0" text-anchor="middle" fill="#5b8db8" font-size="9" font-family="Source Sans 3,sans-serif" font-weight="600">3/36</text>
+<text x="155" y="215" text-anchor="middle" fill="#333" font-size="13" font-family="Source Serif 4,serif" font-weight="700">4</text>
+<text x="155" y="227" text-anchor="middle" fill="#aaa" font-size="9" font-family="Source Sans 3,sans-serif">8.3%</text>
+<rect x="183" y="86.7" width="36" height="113.3" fill="#5b8db8" rx="2"/>
+<text x="201" y="82.7" text-anchor="middle" fill="#5b8db8" font-size="9" font-family="Source Sans 3,sans-serif" font-weight="600">4/36</text>
+<text x="201" y="215" text-anchor="middle" fill="#333" font-size="13" font-family="Source Serif 4,serif" font-weight="700">5</text>
+<text x="201" y="227" text-anchor="middle" fill="#aaa" font-size="9" font-family="Source Sans 3,sans-serif">11.1%</text>
+<rect x="229" y="58.3" width="36" height="141.7" fill="#8b1a1a" rx="2"/>
+<text x="247" y="54.3" text-anchor="middle" fill="#8b1a1a" font-size="9" font-family="Source Sans 3,sans-serif" font-weight="600">5/36</text>
+<text x="247" y="215" text-anchor="middle" fill="#8b1a1a" font-size="13" font-family="Source Serif 4,serif" font-weight="700">6</text>
+<text x="247" y="227" text-anchor="middle" fill="#aaa" font-size="9" font-family="Source Sans 3,sans-serif">13.9%</text>
+<rect x="275" y="30.0" width="36" height="170.0" fill="#555" rx="2"/>
+<text x="293" y="26.0" text-anchor="middle" fill="#555" font-size="9" font-family="Source Sans 3,sans-serif" font-weight="600">6/36</text>
+<text x="293" y="215" text-anchor="middle" fill="#555" font-size="13" font-family="Source Serif 4,serif" font-weight="700">7</text>
+<text x="293" y="227" text-anchor="middle" fill="#aaa" font-size="9" font-family="Source Sans 3,sans-serif">16.7%</text>
+<rect x="321" y="58.3" width="36" height="141.7" fill="#8b1a1a" rx="2"/>
+<text x="339" y="54.3" text-anchor="middle" fill="#8b1a1a" font-size="9" font-family="Source Sans 3,sans-serif" font-weight="600">5/36</text>
+<text x="339" y="215" text-anchor="middle" fill="#8b1a1a" font-size="13" font-family="Source Serif 4,serif" font-weight="700">8</text>
+<text x="339" y="227" text-anchor="middle" fill="#aaa" font-size="9" font-family="Source Sans 3,sans-serif">13.9%</text>
+<rect x="367" y="86.7" width="36" height="113.3" fill="#5b8db8" rx="2"/>
+<text x="385" y="82.7" text-anchor="middle" fill="#5b8db8" font-size="9" font-family="Source Sans 3,sans-serif" font-weight="600">4/36</text>
+<text x="385" y="215" text-anchor="middle" fill="#333" font-size="13" font-family="Source Serif 4,serif" font-weight="700">9</text>
+<text x="385" y="227" text-anchor="middle" fill="#aaa" font-size="9" font-family="Source Sans 3,sans-serif">11.1%</text>
+<rect x="413" y="115.0" width="36" height="85.0" fill="#5b8db8" rx="2"/>
+<text x="431" y="111.0" text-anchor="middle" fill="#5b8db8" font-size="9" font-family="Source Sans 3,sans-serif" font-weight="600">3/36</text>
+<text x="431" y="215" text-anchor="middle" fill="#333" font-size="13" font-family="Source Serif 4,serif" font-weight="700">10</text>
+<text x="431" y="227" text-anchor="middle" fill="#aaa" font-size="9" font-family="Source Sans 3,sans-serif">8.3%</text>
+<rect x="459" y="143.3" width="36" height="56.7" fill="#5b8db8" rx="2"/>
+<text x="477" y="139.3" text-anchor="middle" fill="#5b8db8" font-size="9" font-family="Source Sans 3,sans-serif" font-weight="600">2/36</text>
+<text x="477" y="215" text-anchor="middle" fill="#333" font-size="13" font-family="Source Serif 4,serif" font-weight="700">11</text>
+<text x="477" y="227" text-anchor="middle" fill="#aaa" font-size="9" font-family="Source Sans 3,sans-serif">5.6%</text>
+<rect x="505" y="171.7" width="36" height="28.3" fill="#5b8db8" rx="2"/>
+<text x="523" y="167.7" text-anchor="middle" fill="#5b8db8" font-size="9" font-family="Source Sans 3,sans-serif" font-weight="600">1/36</text>
+<text x="523" y="215" text-anchor="middle" fill="#333" font-size="13" font-family="Source Serif 4,serif" font-weight="700">12</text>
+<text x="523" y="227" text-anchor="middle" fill="#aaa" font-size="9" font-family="Source Sans 3,sans-serif">2.8%</text>
+<rect x="310" y="14" width="10" height="10" fill="#8b1a1a" rx="2"/>
+<text x="323" y="23" fill="#555" font-size="9" font-family="Source Sans 3,sans-serif">6 &amp; 8 (highest value)</text>
+<rect x="420" y="14" width="10" height="10" fill="#555" rx="2"/>
+<text x="433" y="23" fill="#555" font-size="9" font-family="Source Sans 3,sans-serif">7 (robber)</text>
+</svg></div></div>
+    <div class="figure-caption">Figure 1.1 &mdash; All possible sums from two six-sided dice, combination counts, and probabilities. The distribution is symmetric around 7, which occurs with probability 6/36 = 16.67%.</div>
+  </div>
+
+  <p>The distribution is a discrete triangle, symmetric around 7. Seven is the single most probable outcome at 6/36 = 1/6 &asymp; 16.67%. This matters for two distinct reasons: 7 triggers the robber rather than producing resources, and the numbers 6 and 8 (5/36 each) become the most valuable production numbers in the game.</p>
+
+  <h3>The Bell Curve in Practice</h3>
+  <p>The triangle-shaped distribution closely approximates the normal (bell-curve) distribution. In a typical game of 60&ndash;70 rolls, you can expect the following approximate counts for key numbers:</p>
+
+  <div class="figure" id="fig1_2">
+    <div class="figure-body" style="padding:0">
+      <table class="data-table">
+        <thead><tr><th class="center">Number</th><th class="center">Probability</th><th class="center">Expected (60 rolls)</th><th class="center">Expected (70 rolls)</th></tr></thead>
+        <tbody>
+          <tr><td class="center" style="font-weight:700">2</td><td class="center">1/36</td><td class="center">1.7</td><td class="center">1.9</td></tr>
+          <tr><td class="center" style="font-weight:700">3</td><td class="center">2/36</td><td class="center">3.3</td><td class="center">3.9</td></tr>
+          <tr><td class="center" style="font-weight:700">4</td><td class="center">3/36</td><td class="center">5.0</td><td class="center">5.8</td></tr>
+          <tr><td class="center" style="font-weight:700">5</td><td class="center">4/36</td><td class="center">6.7</td><td class="center">7.8</td></tr>
+          <tr><td class="center hi" style="font-weight:700">6</td><td class="center hi">5/36</td><td class="center hi">8.3</td><td class="center hi">9.7</td></tr>
+          <tr><td class="center hi" style="font-weight:700">8</td><td class="center hi">5/36</td><td class="center hi">8.3</td><td class="center hi">9.7</td></tr>
+          <tr><td class="center" style="font-weight:700">9</td><td class="center">4/36</td><td class="center">6.7</td><td class="center">7.8</td></tr>
+          <tr><td class="center" style="font-weight:700">10</td><td class="center">3/36</td><td class="center">5.0</td><td class="center">5.8</td></tr>
+          <tr><td class="center" style="font-weight:700">11</td><td class="center">2/36</td><td class="center">3.3</td><td class="center">3.9</td></tr>
+          <tr><td class="center" style="font-weight:700">12</td><td class="center">1/36</td><td class="center">1.7</td><td class="center">1.9</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="figure-caption">Figure 1.2 &mdash; Expected roll counts for 60- and 70-roll games. Highlighted rows (6 and 8) are the highest-value production numbers.</div>
+  </div>
+
+  <p>These numbers are expectations &mdash; long-run averages. In any individual game, the dice will deviate. This variance is not a flaw in the game&rsquo;s design; it is the primary source of its drama. But understanding expected behavior gives you a powerful baseline for evaluating board positions.</p>
+
+  <h3>The Dots System: A Shorthand for Probability</h3>
+  <p>Catan&rsquo;s number tokens already encode probability information through a system of dots beneath each number. The count of dots equals the number of ways that number can be rolled, providing an immediate visual signal of production value:</p>
+
+  <div class="figure" id="fig1_3">
+    <div class="figure-body" style="padding:0">
+      <table class="data-table">
+        <thead><tr><th class="center">Number</th><th class="center">Dots</th><th class="center">Pips</th><th class="center">Probability</th><th class="center">%</th><th class="center">Token</th></tr></thead>
+        <tbody>
+          <tr><td class="center" style="font-weight:700">2</td><td class="center">&#9679;</td><td class="center">1</td><td class="center">1/36</td><td class="center">2.78%</td><td class="center">Standard</td></tr>
+          <tr><td class="center" style="font-weight:700">3</td><td class="center">&#9679;&#9679;</td><td class="center">2</td><td class="center">2/36</td><td class="center">5.56%</td><td class="center">Standard</td></tr>
+          <tr><td class="center" style="font-weight:700">4</td><td class="center">&#9679;&#9679;&#9679;</td><td class="center">3</td><td class="center">3/36</td><td class="center">8.33%</td><td class="center">Standard</td></tr>
+          <tr><td class="center" style="font-weight:700">5</td><td class="center">&#9679;&#9679;&#9679;&#9679;</td><td class="center">4</td><td class="center">4/36</td><td class="center">11.11%</td><td class="center">Standard</td></tr>
+          <tr><td class="center red">6</td><td class="center red">&#9679;&#9679;&#9679;&#9679;&#9679;</td><td class="center">5</td><td class="center">5/36</td><td class="center">13.89%</td><td class="center"><strong style="color:#8b1a1a">Red (high value)</strong></td></tr>
+          <tr><td class="center red">8</td><td class="center red">&#9679;&#9679;&#9679;&#9679;&#9679;</td><td class="center">5</td><td class="center">5/36</td><td class="center">13.89%</td><td class="center"><strong style="color:#8b1a1a">Red (high value)</strong></td></tr>
+          <tr><td class="center" style="font-weight:700">9</td><td class="center">&#9679;&#9679;&#9679;&#9679;</td><td class="center">4</td><td class="center">4/36</td><td class="center">11.11%</td><td class="center">Standard</td></tr>
+          <tr><td class="center" style="font-weight:700">10</td><td class="center">&#9679;&#9679;&#9679;</td><td class="center">3</td><td class="center">3/36</td><td class="center">8.33%</td><td class="center">Standard</td></tr>
+          <tr><td class="center" style="font-weight:700">11</td><td class="center">&#9679;&#9679;</td><td class="center">2</td><td class="center">2/36</td><td class="center">5.56%</td><td class="center">Standard</td></tr>
+          <tr><td class="center" style="font-weight:700">12</td><td class="center">&#9679;</td><td class="center">1</td><td class="center">1/36</td><td class="center">2.78%</td><td class="center">Standard</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="figure-caption">Figure 1.3 &mdash; The dots-probability correspondence. Red tokens signal the highest-value non-7 numbers. Each pip = 1/36 probability of production per turn.</div>
+  </div>
+
+  <p>The practical value of this system: when evaluating a settlement location at a glance, simply sum the dots on all adjacent hexes. A settlement touching a 6 (5 dots), an 8 (5 dots), and a 9 (4 dots) has a dot total of 14, indicating production on 14 out of every 36 rolls &mdash; approximately every 2.6 turns. We formalize this into a production-rate metric in Part II.</p>
+
+  <h3>Variance and the Law of Large Numbers</h3>
+  <p>The law of large numbers states that as the number of trials increases, the observed average converges to the expected value. In practical terms: your 6 will eventually produce at its theoretical rate, but in any given game of 65 rolls, it might fire only 2 times or as many as 11 times &mdash; both are within normal variance.</p>
+  <p>The standard deviation for the sum of two dice is approximately 2.42. Roughly 68% of rolls fall within 2.42 of the mean (7), corresponding to the numbers 5 through 9 &mdash; a useful intuitive check.</p>
+
+  <h3>The Robber: Seven as a Special Case</h3>
+  <p>Seven is not just the most probable sum; it is mechanically distinct. When a 7 is rolled, no resources are produced, the active player moves the robber to any hex (blocking that tile and stealing a card from an adjacent opponent), and any player holding eight or more cards must discard half. This triple punishment makes 7 the single most impactful number in the game.</p>
+  <p>In a 65-roll game, expect approximately 10&ndash;11 robber activations &mdash; roughly one in six turns. A resource-rich settlement sitting next to a frequently targeted hex will lose more than its dot count suggests. We quantify this in Part IV.</p>
+</div>
+
+<!-- CHAPTER 2 -->
+<div class="chapter" id="ch2">
+  <div class="chapter-label">Chapter 2</div>
+  <h2>Randomness and the Expected Value Framework</h2>
+  <p>The previous chapter established what the dice can produce. This chapter establishes how to <em>think</em> about those dice &mdash; specifically, how to use expected value to evaluate choices under uncertainty. Expected value is the single most powerful tool in a Catan player&rsquo;s analytical toolkit.</p>
+
+  <h3>Defining Expected Value</h3>
+  <p>The expected value (EV) of a random variable is its probability-weighted average outcome. For a discrete random variable X with outcomes x&#8321;, x&#8322;, &hellip;, x<sub>n</sub> and associated probabilities p&#8321;, p&#8322;, &hellip;, p<sub>n</sub>:</p>
+  <div class="math-block">E[X] = &Sigma; (x&#7522; &times; p&#7522;) = x&#8321;p&#8321; + x&#8322;p&#8322; + &hellip; + x<sub>n</sub>p<sub>n</sub></div>
+  <p>Expected value does not tell you what will happen in any single trial. It tells you the average outcome across many trials. The EV of rolling a single die is 3.5, even though 3.5 can never appear on the die.</p>
+
+  <h3>Expected Resources Per Turn</h3>
+  <p>For a settlement adjacent to a single hex bearing number token N, the expected resources produced per turn equals the probability of rolling N. In the base case (no robber present), the expected resources per turn from one hex equals that probability directly:</p>
+
+  <div class="figure" id="fig2_1">
+    <div class="figure-body" style="padding:0">
+      <table class="data-table">
+        <thead><tr><th class="center">Hex Token</th><th class="center">Probability</th><th class="center">Settlement EV/turn</th><th class="center">City EV/turn</th></tr></thead>
+        <tbody>
+          <tr><td class="center" style="font-weight:700">2</td><td class="center">1/36</td><td class="center">0.0278</td><td class="center">0.0556</td></tr>
+          <tr><td class="center" style="font-weight:700">3</td><td class="center">2/36</td><td class="center">0.0556</td><td class="center">0.1111</td></tr>
+          <tr><td class="center" style="font-weight:700">4</td><td class="center">3/36</td><td class="center">0.0833</td><td class="center">0.1667</td></tr>
+          <tr><td class="center" style="font-weight:700">5</td><td class="center">4/36</td><td class="center">0.1111</td><td class="center">0.2222</td></tr>
+          <tr><td class="center" style="font-weight:700">6</td><td class="center">5/36</td><td class="center">0.1389</td><td class="center">0.2778</td></tr>
+          <tr><td class="center" style="font-weight:700">8</td><td class="center">5/36</td><td class="center">0.1389</td><td class="center">0.2778</td></tr>
+          <tr><td class="center" style="font-weight:700">9</td><td class="center">4/36</td><td class="center">0.1111</td><td class="center">0.2222</td></tr>
+          <tr><td class="center" style="font-weight:700">10</td><td class="center">3/36</td><td class="center">0.0833</td><td class="center">0.1667</td></tr>
+          <tr><td class="center" style="font-weight:700">11</td><td class="center">2/36</td><td class="center">0.0556</td><td class="center">0.1111</td></tr>
+          <tr><td class="center" style="font-weight:700">12</td><td class="center">1/36</td><td class="center">0.0278</td><td class="center">0.0556</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="figure-caption">Figure 2.1 &mdash; Expected resources per turn from a single hex, by number token. Cities double all values.</div>
+  </div>
+
+  <p>For a settlement adjacent to multiple hexes, expected production per turn is the sum of the individual tile probabilities (assuming independent rolls). For a city, production doubles.</p>
+
+  <h3>The Concept of Pips</h3>
+  <p>Experienced Catan players use the term &ldquo;pips&rdquo; (the dots on number tokens) as a shorthand for production value. Since the number of dots equals the probability numerator over 36, total pips for a settlement equals the numerator of its total production probability. A settlement with 12 total pips has an expected production of 12/36 = 1/3 of a resource per turn.</p>
+  <p>The theoretical maximum pip count for a single settlement is 15, achievable only on boards where three high-value hexes share a vertex. In practice, competitive pip counts cluster between 10 and 14.</p>
+
+  <h3>Expected Value Across a Full Game</h3>
+  <p>Assume an average of 65 total rolls with 10&ndash;11 sevens, leaving approximately 54&ndash;55 productive rolls. A settlement with 12 pips has an EV of 12/36 = 0.333 resources per productive turn. Over 54 productive turns, the expected total production is 0.333 &times; 54 = 18 resources. A city on the same spot doubles this to approximately 36 resources.</p>
+
+  <h3>EV and Decision-Making</h3>
+  <p>The practical application of EV is not to compute precise decimals at the table &mdash; though the trained eye does this intuitively. It is to build a consistent framework for comparing options. When evaluating any decision &mdash; where to place a road, whether to trade, when to build versus save &mdash; the EV framework asks: given the range of possible outcomes and their probabilities, which choice produces the highest expected payoff?</p>
+  <p>This framework does not guarantee winning. A high-EV decision can yield a poor outcome; that is the nature of randomness. But over the course of an entire game, consistently choosing positive-EV actions will outperform decisions made on instinct or emotion.</p>
+</div>
+
+<!-- CHAPTER 3 -->
+<div class="chapter" id="ch3">
+  <div class="chapter-label">Chapter 3</div>
+  <h2>Long-Run vs. Short-Run Thinking</h2>
+  <p>The tension between long-run expected value and short-run variance is the defining psychological challenge of Catan. Players who conflate the two make systematic strategic errors &mdash; either over-weighting a bad run of luck (&ldquo;my 6 never rolls&rdquo;) or under-weighting the real impact of unlucky streaks on a game that lasts only 60&ndash;70 turns.</p>
+
+  <h3>The Game as a Statistical Sample</h3>
+  <p>A typical Catan game involves 60&ndash;75 rolls of the dice &mdash; a relatively small sample size from a statistical perspective. For comparison, a casino roulette wheel must spin thousands of times before observed frequencies closely mirror theoretical probabilities. With 65 dice rolls, noticeable deviation from expected values is not a flaw in your analysis; it is a mathematical certainty.</p>
+  <p>The coefficient of variation (CV) for dice-roll frequency is especially high for low-probability numbers. For a number with probability 1/36 (like 2 or 12), the expected count is 1.8 rolls with a standard deviation of approximately 1.32. A CV of 73% means seeing zero, one, or three rolls of that number are all well within normal range.</p>
+
+  <h3>Standard Deviation of Roll Counts</h3>
+  <p>For a number that appears with probability p in n total rolls, the expected count is np, and since each roll is a Bernoulli trial, the standard deviation is &radic;(np(1&minus;p)).</p>
+
+  <div class="figure" id="fig3_1">
+    <div class="figure-body" style="padding:0">
+      <table class="data-table">
+        <thead><tr><th class="center">Number</th><th class="center">Probability</th><th class="center">Expected (65 rolls)</th><th class="center">Std Dev</th><th class="center">Typical Range (68%)</th></tr></thead>
+        <tbody>
+          <tr><td class="center" style="font-weight:700">2</td><td class="center">1/36</td><td class="center">1.8</td><td class="center">1.32</td><td class="center">0.5 &ndash; 3.1</td></tr>
+          <tr><td class="center" style="font-weight:700">3</td><td class="center">2/36</td><td class="center">3.6</td><td class="center">1.85</td><td class="center">1.8 &ndash; 5.5</td></tr>
+          <tr><td class="center" style="font-weight:700">4</td><td class="center">3/36</td><td class="center">5.4</td><td class="center">2.23</td><td class="center">3.2 &ndash; 7.6</td></tr>
+          <tr><td class="center" style="font-weight:700">5</td><td class="center">4/36</td><td class="center">7.2</td><td class="center">2.53</td><td class="center">4.7 &ndash; 9.7</td></tr>
+          <tr><td class="center" style="font-weight:700">6</td><td class="center">5/36</td><td class="center">9.0</td><td class="center">2.79</td><td class="center">6.2 &ndash; 11.8</td></tr>
+          <tr><td class="center" style="font-weight:700">8</td><td class="center">5/36</td><td class="center">9.0</td><td class="center">2.79</td><td class="center">6.2 &ndash; 11.8</td></tr>
+          <tr><td class="center" style="font-weight:700">9</td><td class="center">4/36</td><td class="center">7.2</td><td class="center">2.53</td><td class="center">4.7 &ndash; 9.7</td></tr>
+          <tr><td class="center" style="font-weight:700">10</td><td class="center">3/36</td><td class="center">5.4</td><td class="center">2.23</td><td class="center">3.2 &ndash; 7.6</td></tr>
+          <tr><td class="center" style="font-weight:700">11</td><td class="center">2/36</td><td class="center">3.6</td><td class="center">1.85</td><td class="center">1.8 &ndash; 5.5</td></tr>
+          <tr><td class="center" style="font-weight:700">12</td><td class="center">1/36</td><td class="center">1.8</td><td class="center">1.32</td><td class="center">0.5 &ndash; 3.1</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="figure-caption">Figure 3.1 &mdash; Expected roll counts and standard deviations for a 65-roll game. &ldquo;Typical range&rdquo; represents mean &plusmn; 1 standard deviation, encompassing approximately 68% of outcomes.</div>
+  </div>
+
+  <p>The practical takeaway: your 6-token hex is expected to produce 9 times but could reasonably produce anywhere from 6 to 12 times. Your 2-token hex may well produce zero times in a given game. Planning for only expected value without acknowledging variance leads to fragile strategies.</p>
+
+  <h3>Diversification as Variance Reduction</h3>
+  <p>Spreading your production across multiple numbers reduces the impact of any individual number&rsquo;s variance. If your entire economy depends on a single 8-token hex, you are fully exposed to that number&rsquo;s variance. A bad run &mdash; say, 4 rolls instead of 9 &mdash; could be catastrophic. If instead you have production on a 6, an 8, and a 5, poor performance on one is partially offset by normal or above-average performance on the others.</p>
+  <p>This is the same principle that underlies portfolio diversification in finance. The dice rolls in Catan are independent events, making number diversification a mathematically sound risk-reduction strategy.</p>
+
+  <h3>When to Trust Your EV Analysis</h3>
+  <p>EV calculations become increasingly reliable as the number of productive rolls you stand to benefit from increases. In the first 20 rolls, a 6-token hex could easily under-perform by 3&ndash;4 rolls with no recourse. By roll 50, the law of large numbers has had more opportunity to operate, and extreme deviations become less likely.</p>
+  <p>This suggests a timing implication: in the early game, a highly variable but high-EV position may be preferable to a safe, moderate-EV position, because there is more game ahead for the EV to materialize. In the late game, when only 10&ndash;15 rolls remain, a position with lower but more reliable production &mdash; or one that does not depend on production at all (port arbitrage, development cards) &mdash; may be strategically superior.</p>
+</div>
+
+</main>
+
+<script>
+// Highlight active sidebar entry based on scroll position
+const entries = document.querySelectorAll('#sidebar .toc-entry:not(.pending)');
+const sections = Array.from(entries).map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+window.addEventListener('scroll', () => {
+  let cur = sections[0];
+  sections.forEach(s => { if (window.scrollY + 80 >= s.offsetTop) cur = s; });
+  entries.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + cur.id);
+  });
+}, {passive: true});
+</script>
+</body>
+</html>
