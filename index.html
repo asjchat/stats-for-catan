@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Statistics for Catan — Part I: The Engine of the Game</title>
+<title>Statistics for Catan -- Parts I, II, and III</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Source+Sans+3:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -28,7 +28,7 @@ body {
   min-height: 100vh;
 }
 
-/* ── SIDEBAR ── */
+/* SIDEBAR */
 #sidebar {
   width: var(--sidebar-w);
   min-width: var(--sidebar-w);
@@ -92,7 +92,7 @@ body {
   font-style: italic;
 }
 
-/* ── MAIN CONTENT ── */
+/* MAIN */
 #main {
   margin-left: var(--sidebar-w);
   flex: 1;
@@ -102,7 +102,7 @@ body {
   font-size: 1.0125rem;
 }
 
-/* ── FRONT MATTER ── */
+/* FRONT MATTER */
 .fm-title-block {
   border-bottom: 2px solid var(--text);
   padding-bottom: 1.5rem;
@@ -148,7 +148,7 @@ body {
 }
 .fm-author span { font-weight: 600; }
 
-/* ── DEDICATION ── */
+/* DEDICATION */
 .dedication {
   margin: 2.5rem 0 3rem;
   padding: 1.5rem 2rem;
@@ -159,7 +159,7 @@ body {
   line-height: 1.7;
 }
 
-/* ── SECTION HEADINGS ── */
+/* SECTION HEADINGS */
 .section-head {
   font-family: 'Source Sans 3', sans-serif;
   font-size: 0.72rem;
@@ -184,7 +184,7 @@ h2.about-heading {
   margin-bottom: 0.4rem;
 }
 
-/* ── PART HEADER ── */
+/* PART HEADER */
 .part-header {
   margin: 3rem 0 2rem;
   padding: 1.4rem 0;
@@ -210,7 +210,7 @@ h2.about-heading {
   font-size: 0.95rem;
 }
 
-/* ── CHAPTERS ── */
+/* CHAPTERS */
 .chapter { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border); }
 .chapter-label {
   font-family: 'Source Sans 3', sans-serif;
@@ -229,7 +229,7 @@ h2.about-heading {
 }
 .chapter p { margin-bottom: 1rem; }
 
-/* ── MATH ── */
+/* MATH */
 .math-block {
   background: var(--code-bg);
   border-left: 3px solid #888;
@@ -242,7 +242,7 @@ h2.about-heading {
   color: #1a1a1a;
 }
 
-/* ── FIGURES ── */
+/* FIGURES */
 .figure {
   margin: 1.8rem 0;
   border: 1px solid var(--border);
@@ -260,7 +260,7 @@ h2.about-heading {
   font-family: 'Source Sans 3', sans-serif;
 }
 
-/* ── TABLES ── */
+/* TABLES */
 .data-table {
   width: 100%; border-collapse: collapse;
   font-size: 0.88rem;
@@ -281,10 +281,10 @@ h2.about-heading {
 .data-table td.hi { background: #fff8e8 !important; font-weight: 600; }
 .data-table td.red { color: var(--accent); font-weight: 600; }
 
-/* ── BOARD ── */
+/* BOARD */
 .board-wrap { display: flex; justify-content: center; padding: 1.2rem 1rem; background: #fafafa; }
 
-/* ── CALLOUT ── */
+/* CALLOUT */
 .callout {
   background: #fafafa;
   border: 1px solid #ccc;
@@ -294,6 +294,19 @@ h2.about-heading {
   font-size: 0.93rem;
   border-radius: 0 3px 3px 0;
 }
+.callout strong { display: block; margin-bottom: 0.3rem; font-family: 'Source Sans 3', sans-serif; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em; color: #555; }
+
+/* EXAMPLE BOX */
+.example-box {
+  background: #fffdf5;
+  border: 1px solid #e0d5a0;
+  border-left: 3px solid #b8a020;
+  padding: 0.9rem 1.1rem;
+  margin: 1.4rem 0;
+  font-size: 0.93rem;
+  border-radius: 0 3px 3px 0;
+}
+.example-box strong { display: block; margin-bottom: 0.3rem; font-family: 'Source Sans 3', sans-serif; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em; color: #7a6010; }
 
 /* print / mobile */
 @media(max-width:700px){
@@ -318,65 +331,63 @@ h2.about-heading {
   <a class="toc-entry" href="#about">About the Author</a>
 
   <hr class="toc-divider">
-  <div class="toc-section-label">Part I — The Engine of the Game</div>
+  <div class="toc-section-label">Part I -- The Engine of the Game</div>
   <a class="toc-entry" href="#ch1"><span class="toc-ch">1.</span> The Dice Control Everything</a>
   <a class="toc-entry" href="#ch2"><span class="toc-ch">2.</span> Randomness &amp; Expected Value</a>
   <a class="toc-entry" href="#ch3"><span class="toc-ch">3.</span> Long-Run vs. Short-Run Thinking</a>
 
   <hr class="toc-divider">
-  <div class="toc-section-label">Part II — Settlement Mathematics</div>
-  <a class="toc-entry pending" tabindex="-1">Writing in progress&hellip;</a>
-  <div class="toc-wip-note">To be published soon</div>
+  <div class="toc-section-label">Part II -- Settlement Mathematics</div>
+  <a class="toc-entry" href="#ch4"><span class="toc-ch">4.</span> Settlement Strength</a>
+  <a class="toc-entry" href="#ch5"><span class="toc-ch">5.</span> Production and Balance</a>
+  <a class="toc-entry" href="#ch6"><span class="toc-ch">6.</span> The First Two Settlements</a>
+  <a class="toc-entry" href="#ch7"><span class="toc-ch">7.</span> City Timing and Returns</a>
 
   <hr class="toc-divider">
-  <div class="toc-section-label">Part III — Resource Flow &amp; Economics</div>
-  <a class="toc-entry pending" tabindex="-1">Writing in progress&hellip;</a>
-  <div class="toc-wip-note">To be published soon</div>
+  <div class="toc-section-label">Part III -- Resource Flow &amp; Economics</div>
+  <a class="toc-entry" href="#ch8"><span class="toc-ch">8.</span> Production Rates and Bottlenecks</a>
+  <a class="toc-entry" href="#ch9"><span class="toc-ch">9.</span> Ports and Exchange Rates</a>
+  <a class="toc-entry" href="#ch10"><span class="toc-ch">10.</span> Development Cards</a>
 
   <hr class="toc-divider">
-  <div class="toc-section-label">Part IV — The Robber</div>
-  <a class="toc-entry pending" tabindex="-1">Writing in progress&hellip;</a>
-  <div class="toc-wip-note">To be published soon</div>
-
-  <hr class="toc-divider">
-  <div class="toc-section-label">Part V — Multiplayer Dynamics</div>
-  <a class="toc-entry pending" tabindex="-1">Writing in progress&hellip;</a>
-  <div class="toc-wip-note">To be published soon</div>
-
-  <hr class="toc-divider">
-  <div class="toc-section-label">Part VI — Map &amp; Positional Strategy</div>
-  <a class="toc-entry pending" tabindex="-1">Writing in progress&hellip;</a>
-  <div class="toc-wip-note">To be published soon</div>
+  <div class="toc-section-label">Parts IV -- VI</div>
+  <a class="toc-entry pending" tabindex="-1">The Robber</a>
+  <a class="toc-entry pending" tabindex="-1">Multiplayer Dynamics</a>
+  <a class="toc-entry pending" tabindex="-1">Map &amp; Positional Strategy</a>
+  <div class="toc-wip-note">Coming soon</div>
 </nav>
 
 <main id="main">
 
-<!-- TITLE BLOCK -->
+<!-- ============================================================ -->
+<!-- FRONT MATTER (preserved verbatim from original)             -->
+<!-- ============================================================ -->
+
 <div class="fm-title-block">
   <div class="fm-series">Statistics for Catan</div>
-  <div class="fm-part-badge">Part I</div>
+  <div class="fm-part-badge">Parts I, II &amp; III</div>
   <h1 class="fm-title">The Engine of the Game</h1>
   <div class="fm-subtitle">Probability, Dice, and the Expected-Value Framework</div>
   <div class="fm-author">By <span>Ananda Chatterjee</span></div>
 </div>
 
-<!-- DEDICATION -->
 <div class="dedication" id="dedication">
   <p>Dedicated to my mom and dad.</p>
 </div>
 
-<!-- PREFACE -->
 <div class="section-head" id="preface">Preface</div>
 <h2 class="preface-heading">Why I Wrote This</h2>
 <p>This project started when I enrolled in my first probability theory course and realized that Catan was a direct application of nearly everything I was studying. Expected value, variance, the law of large numbers, conditional probability &mdash; concepts I was encountering as abstract formulas had concrete, immediate relevance every time two dice hit the table. This text is an attempt to make that connection explicit.</p>
 <p>You do not need a statistics background but you do need to know the rules of Catan. Part I covers the pure mathematics of the dice and the expected-value reasoning that should underlie every decision. Subsequent parts extend this framework to settlement placement, resource economics, the robber, multiplayer game theory, and positional strategy.</p>
 
-<!-- ABOUT -->
 <div class="section-head" id="about">About the Author</div>
 <h2 class="about-heading">Ananda Chatterjee</h2>
 <p>Ananda is a Statistics major at the University of Florida. He has been playing Catan since his junior year of high school and has loved the game ever since.</p>
 
-<!-- PART I -->
+<!-- ============================================================ -->
+<!-- PART I (preserved verbatim from original)                   -->
+<!-- ============================================================ -->
+
 <div class="part-header" id="part1">
   <div class="part-num">Part I</div>
   <h2>The Engine of the Game</h2>
@@ -619,19 +630,513 @@ h2.about-heading {
   <p>This suggests a timing implication: in the early game, a highly variable but high-EV position may be preferable to a safe, moderate-EV position, because there is more game ahead for the EV to materialize. In the late game, when only 10&ndash;15 rolls remain, a position with lower but more reliable production &mdash; or one that does not depend on production at all (port arbitrage, development cards) &mdash; may be strategically superior.</p>
 </div>
 
+
+<!-- ============================================================ -->
+<!-- PART II                                                      -->
+<!-- ============================================================ -->
+
+<div class="part-header" id="part2">
+  <div class="part-num">Part II</div>
+  <h2>Settlement Mathematics</h2>
+  <p>From raw probability to placement decisions: how to measure, compare, and optimize where you build.</p>
+</div>
+
+<!-- CHAPTER 4 -->
+<div class="chapter" id="ch4">
+  <div class="chapter-label">Chapter 4</div>
+  <h2>Calculating the Strength of a Settlement</h2>
+
+  <p>Part I established that every Catan resource originates from a dice roll and that different number tokens carry different probabilities. Part II applies that framework to the concrete question a player faces before every new settlement: which vertex on this board is actually worth building on? This chapter develops a rigorous metric for answering that question and works through comparisons on real board configurations.</p>
+
+  <h3>The Production Score</h3>
+  <p>The most direct measure of a settlement's value is its <em>production score</em>: the sum of pip values across all adjacent terrain hexes, excluding the desert. Because each pip equals 1/36 probability of producing one resource per turn, the production score is exactly 36 times the settlement's expected output per turn.</p>
+
+  <div class="math-block">Production Score  =  sum of pips on each adjacent hex
+Expected resources/turn  =  Production Score / 36</div>
+
+  <div class="figure" id="fig4_1">
+    <div class="figure-body" style="padding:0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="center">Production Score (pips)</th>
+            <th class="center">EV per turn</th>
+            <th class="center">Expected resources (54 productive turns)</th>
+            <th class="center">Assessment</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="center hi">15</td><td class="center hi">0.417</td><td class="center hi">22.5</td><td class="hi">Theoretical maximum -- rarely achievable</td></tr>
+          <tr><td class="center hi">14</td><td class="center hi">0.389</td><td class="center hi">21.0</td><td class="hi">Elite</td></tr>
+          <tr><td class="center hi">13</td><td class="center hi">0.361</td><td class="center hi">19.5</td><td class="hi">Excellent</td></tr>
+          <tr><td class="center">12</td><td class="center">0.333</td><td class="center">18.0</td><td>Very good</td></tr>
+          <tr><td class="center">11</td><td class="center">0.306</td><td class="center">16.5</td><td>Good</td></tr>
+          <tr><td class="center">10</td><td class="center">0.278</td><td class="center">15.0</td><td>Above average</td></tr>
+          <tr><td class="center">9</td><td class="center">0.250</td><td class="center">13.5</td><td>Average</td></tr>
+          <tr><td class="center">8</td><td class="center">0.222</td><td class="center">12.0</td><td>Below average</td></tr>
+          <tr><td class="center">7</td><td class="center">0.194</td><td class="center">10.5</td><td>Weak (often desert-adjacent)</td></tr>
+          <tr><td class="center">6 or less</td><td class="center">&lt; 0.167</td><td class="center">&lt; 9.0</td><td>Poor</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="figure-caption">Figure 4.1 -- Production scores, expected-value equivalents, and approximate full-game resource totals assuming 54 productive turns (65 total rolls minus ~11 sevens).</div>
+  </div>
+
+  <h3>Why Resource Type Still Matters</h3>
+  <p>Production scores treat all resources as equivalent. In isolation that is fine; in context it is incomplete. A settlement producing 12 pips of ore alone is not as flexible as one producing 10 pips spread across wood, brick, and grain, because the mono-resource player must trade for everything else. The implicit cost of each trade is between one and three extra resources, depending on port access. A raw pip comparison ignores that tax entirely.</p>
+  <p>The practical correction is to track resource diversity alongside production score and to penalize, mentally, any location that collapses onto a single resource type you already produce abundantly. This adjustment is qualitative but systematic: before committing to a high-pip location, ask whether the resources it provides are ones you genuinely need or ones you will be forced to give away at a loss.</p>
+
+  <h3>The Intersection Quality Rating</h3>
+  <p>To fold both production and diversity into a single comparable number, we define the Intersection Quality Rating (IQR):</p>
+
+  <div class="math-block">IQR  =  Production Score  +  (2 x number of distinct resource types adjacent)</div>
+
+  <p>The +2 per resource type is a heuristic that approximates the trading efficiency gained by self-supplying a resource rather than acquiring it at a 3:1 or 4:1 rate. Locations with an IQR above 18 are prime; below 12, they are generally not worth a road investment to reach.</p>
+
+  <div class="example-box">
+    <strong>Example 4.1 -- Two Apparently Equal Locations</strong>
+    Location A: adjacent to 8 (ore), 6 (grain), 3 (brick). Pips: 5 + 5 + 2 = 12. Three resource types. IQR = 12 + 6 = 18.<br><br>
+    Location B: adjacent to 9 (wheat), 9 (ore), 5 (sheep). Pips: 4 + 4 + 4 = 12. Three resource types. IQR = 12 + 6 = 18.<br><br>
+    The IQR scores are identical, confirming that both locations offer comparable expected value. The difference lies in variance: Location A has a high-production anchor (two 5-pip tokens), meaning it will produce more reliably on any given turn. Location B spreads its production more evenly across three mid-range numbers, which is slightly safer against individual number droughts but produces in smaller, more predictable increments. A risk-averse player marginally prefers A; a player chasing production consistency may prefer B.
+  </div>
+
+  <h3>Port Adjacency</h3>
+  <p>A settlement vertex that also touches a port provides an ongoing trading benefit worth a meaningful IQR premium. As a working rule: add 3 IQR points for a 2:1 port that matches a resource you produce in volume, and 1 point for a 3:1 generic port. Port valuation is covered in full in Chapter 9; the point here is that port adjacency is a genuine, measurable component of location quality and should not be treated as a secondary concern.</p>
+</div>
+
+
+<!-- CHAPTER 5 -->
+<div class="chapter" id="ch5">
+  <div class="chapter-label">Chapter 5</div>
+  <h2>Production and Balance: Resource Diversity vs. Output</h2>
+
+  <p>Chapter 4 introduced the IQR as a composite measure of location quality. This chapter goes deeper: when is raw output worth sacrificing for broader resource coverage, and when does concentration pay off? The answer turns on port access, your opponents' positions, and where in the game you find yourself.</p>
+
+  <h3>The Cost of a Missing Resource</h3>
+  <p>If your settlements produce no wood, every road and every settlement you build requires acquiring wood through trade. At a 3:1 generic port, you pay 3 of any resource for 1 wood. At the bank's default rate, 4 for 1. Each road (which needs 1 wood + 1 brick) then costs 4 or 5 total resources instead of 2. The missing resource premium per road is 2 to 3 additional resources.</p>
+  <p>Over a full game, a player building four roads and three settlements while missing wood might pay an extra 12 to 15 resources in trade inefficiency. At a production rate of roughly 0.3 resources per productive turn, recovering that deficit requires approximately 40 to 50 extra turns of production -- more turns than a typical game contains. The implication is stark: a structural resource gap, left unaddressed, is not a temporary inconvenience but a persistent economic penalty.</p>
+
+  <h3>Measuring Balance: The Concentration Index</h3>
+  <p>The Herfindahl-Hirschman Index (HHI), a standard tool from industrial economics, provides a precise measure of resource concentration. For a player's pip distribution across all five resource types:</p>
+
+  <div class="math-block">HHI  =  sum of (pips_i / total_pips)^2  for each resource type i</div>
+
+  <p>An HHI of 1.0 means all pips come from one resource type. An HHI of 0.20 means pips are perfectly equal across all five types. Values below 0.30 indicate healthy diversity; values above 0.50 signal significant concentration risk.</p>
+
+  <div class="example-box">
+    <strong>Example 5.1 -- Computing the HHI</strong>
+    A player's total pips by resource type: ore = 10, grain = 8, wood = 5, brick = 0, sheep = 3 (total = 26).<br><br>
+    Fractions: ore = 10/26 = 0.385, grain = 8/26 = 0.308, wood = 5/26 = 0.192, brick = 0/26 = 0, sheep = 3/26 = 0.115.<br><br>
+    HHI = 0.385^2 + 0.308^2 + 0.192^2 + 0^2 + 0.115^2 = 0.148 + 0.095 + 0.037 + 0 + 0.013 = 0.293.<br><br>
+    This is borderline acceptable. The distribution is reasonably diverse across four resource types, but the complete absence of brick is a meaningful structural weakness. Any road or settlement building requires trading at a premium rate.
+  </div>
+
+  <h3>When Concentration Wins</h3>
+  <p>Despite the argument for diversity, concentrated positions are genuinely superior in one specific circumstance: when a matching 2:1 port is accessible. A player who produces ore at a combined rate of 14 pips (two strong ore hexes) and sits on the ore port can convert excess ore into any other resource at half the standard cost. The effective exchange rate of 2:1 transforms what would otherwise be crippling overproduction into near-universal purchasing power.</p>
+
+  <div class="figure" id="fig5_1">
+    <div class="figure-body" style="padding:0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Strategy</th>
+            <th>Strengths</th>
+            <th>Weaknesses</th>
+            <th>Best when</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Diversified</strong> (3+ resource types)</td>
+            <td>Low trade dependency, resilient to refusals</td>
+            <td>Lower peak output per resource type</td>
+            <td>No strong port access; competitive early game</td>
+          </tr>
+          <tr>
+            <td><strong>Concentrated</strong> (1 to 2 types)</td>
+            <td>High volume, port synergy, simple supply chain</td>
+            <td>Exposed to trade embargos; brittle without port</td>
+            <td>You control a matching 2:1 port</td>
+          </tr>
+          <tr>
+            <td><strong>Mixed</strong> (2 types, moderate pips)</td>
+            <td>Moderate on both axes</td>
+            <td>No decisive advantage in either direction</td>
+            <td>Second or third settlement filling a gap</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="figure-caption">Figure 5.1 -- Strategic archetypes by resource concentration. Port access is the pivotal variable that determines whether concentration is an asset or a liability.</div>
+  </div>
+
+  <h3>Balance Across the Game Arc</h3>
+  <p>The value of resource diversity is not constant over the course of a game. In the opening and early midgame, diversity is most critical because you need multiple resource types simultaneously to build roads, settlements, and eventually cities. Acquiring any one resource through trade is expensive, so self-sufficiency matters most when the build queue is longest.</p>
+  <p>In the late game, strategic focus narrows. A player at 8 victory points who needs only a city and a development card can afford to specialize entirely in ore, grain, and sheep. The diversity premium shrinks when you no longer need a broad range of resources to win. Recognizing this transition and adjusting your trading priorities accordingly is a practical and underappreciated skill.</p>
+</div>
+
+
+<!-- CHAPTER 6 -->
+<div class="chapter" id="ch6">
+  <div class="chapter-label">Chapter 6</div>
+  <h2>The First Two Settlements: A Mathematical Approach</h2>
+
+  <p>Every resource you will ever collect in a game of Catan flows from decisions made before you take a single turn. The initial placement phase, in which each player places two settlements and two roads in a snake-draft order, is the highest-leverage decision sequence in the game. This chapter develops a decision framework for both placements.</p>
+
+  <h3>The Snake Draft and Turn Order</h3>
+  <p>In a four-player game, placement order follows a snake draft: Player 1, 2, 3, 4, 4, 3, 2, 1. Player 1 has unrestricted first access to the board's best vertex but must then wait through six more placements before their second pick. Player 4 places twice in succession and can specifically complement their first settlement without interference. Players 2 and 3 face the tightest constraints on their second placements, as the board is more crowded without the consecutive-pick advantage Player 4 enjoys.</p>
+  <p>In practice, going first is generally considered the strongest position because the single best vertex on any board is almost never available after three other players have picked. Going fourth is the second-strongest position because of the consecutive placement advantage. Going second or third, while perfectly viable, typically requires the sharpest positional reading of the available options.</p>
+
+  <h3>First Placement Criteria</h3>
+  <p>For the first settlement, the dominant criterion is absolute production score. At this stage of the game you know nothing about what resources your second settlement will provide, so the best available vertex in raw pip terms -- subject to a minimum resource-diversity floor of at least two distinct resource types -- is almost always correct. Aiming for at least 11 pips on the first settlement is a reasonable target. Accepting fewer than 9 is, in most cases, a mistake with lasting consequences.</p>
+  <p>Road direction is the secondary consideration. Think one step forward: given the board geometry, which direction from this vertex has the most remaining high-quality settlement locations? A first settlement that is already hemmed in on three sides by other players' intended paths has less long-term value than its pip count alone suggests.</p>
+
+  <h3>The Second Placement</h3>
+  <p>The second settlement must complement the first. The guiding principle is resource complementarity: the second settlement should provide the resource types your first settlement lacks, at a production score that keeps your combined total competitive.</p>
+
+  <div class="math-block">Target combined pip total: at least 22 pips across both settlements</div>
+
+  <div class="figure" id="fig6_1">
+    <div class="figure-body" style="padding:0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="center">Combined Starting Pips</th>
+            <th>Assessment</th>
+            <th>Typical Trajectory</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="center hi">25 or more</td><td class="hi">Excellent</td><td class="hi">Strong production lead; well-positioned to compete for VPs</td></tr>
+          <tr><td class="center hi">23 to 24</td><td class="hi">Good</td><td class="hi">Competitive start; resource balance determines outcome</td></tr>
+          <tr><td class="center">21 to 22</td><td>Average</td><td>Playable; requires efficient decisions to compensate</td></tr>
+          <tr><td class="center">19 to 20</td><td>Weak</td><td>Meaningful production deficit; needs port or strategic edge</td></tr>
+          <tr><td class="center">18 or less</td><td>Very weak</td><td>Recovery strategy required; high variance needed to compete</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="figure-caption">Figure 6.1 -- Combined starting pip total assessment. The 22-pip threshold is a useful planning floor, not a hard rule, and always interacts with resource diversity.</div>
+  </div>
+
+  <h3>The Starting Hand</h3>
+  <p>Each second settlement produces an immediate bonus: one resource card from each adjacent hex. This starting hand of two or three cards determines what you can build on Turn 1. Most players aim for a starting hand that enables immediate road construction (1 wood + 1 brick), securing an expansion corridor before the board fills. A second settlement that yields only ore, sheep, and grain on all three adjacent tiles is strong for the long game but generates nothing spendable immediately, creating a tempo disadvantage in competitive play against players who can build roads from Turn 1.</p>
+
+  <div class="example-box">
+    <strong>Example 6.1 -- A Textbook Opening</strong>
+    Player scans the board. The strongest available vertex, junction A, touches a 6 (ore), an 8 (grain), and a 5 (sheep): 14 pips, covering ore, grain, and sheep. Player takes it.<br><br>
+    For the second settlement, all remaining strong vertices offer wood or brick access. Player selects junction B: a 9 (wood), a 4 (brick), and a 3 (wheat): 9 pips, covering wood, brick, and wheat. Combined pip total: 14 + 9 = 23. Resource coverage: all five types. Starting hand from B: 1 wood + 1 brick + 1 wheat. First action: build a road toward an open coastal corridor.<br><br>
+    This is a strong, orthodox start. The 14-pip anchor at A ensures robust long-term production; the 9-pip second settlement at B fills every resource gap and provides the wood and brick needed to act immediately.
+  </div>
+
+  <h3>Correcting for Late Placement</h3>
+  <p>Players picking third or fourth in the second round face a more constrained choice set. When no placement fully satisfies the complementarity requirement, the priority ordering is: (1) fill the most critical missing resource type, (2) maximize pips within the remaining options, and (3) choose the location with the best expansion shadow (the set of quality vertices reachable within two or three roads). Accepting a slightly lower pip count in exchange for meaningfully better expansion access is often the correct call in a crowded midboard.</p>
+</div>
+
+
+<!-- CHAPTER 7 -->
+<div class="chapter" id="ch7">
+  <div class="chapter-label">Chapter 7</div>
+  <h2>City Timing and Return on Investment</h2>
+
+  <p>A city costs 3 ore and 2 grain, upgrades an existing settlement, adds one victory point, and doubles that settlement's production from that point forward. It is the single highest-return investment in the game by most metrics -- but only when timed correctly. This chapter uses return-on-investment (ROI) analysis to determine when upgrading is correct and when the same resources are better spent elsewhere.</p>
+
+  <h3>The City as a Capital Investment</h3>
+  <p>Think of a city as a capital expenditure that generates an ongoing production dividend. The cost is fixed at 5 resources (3 ore + 2 grain). The return is one additional resource card each time the underlying hex's number rolls. The break-even question is therefore: how many turns until the additional production from the city recoups the 5-resource build cost?</p>
+  <p>The city doubles production at that settlement, adding exactly p resources per turn (where p is the settlement's combined production probability). The payback period in turns is:</p>
+
+  <div class="math-block">Payback period (turns)  =  5 / p  =  5 / (Production Score / 36)  =  180 / Production Score</div>
+
+  <div class="figure" id="fig7_1">
+    <div class="figure-body" style="padding:0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="center">Settlement pips</th>
+            <th class="center">p (EV/turn)</th>
+            <th class="center">Payback period (turns)</th>
+            <th class="center">Additional resources by turn 60</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="center hi">14</td><td class="center hi">0.389</td><td class="center hi">12.9</td><td class="center hi">+18.3</td></tr>
+          <tr><td class="center hi">13</td><td class="center hi">0.361</td><td class="center hi">13.9</td><td class="center hi">+17.0</td></tr>
+          <tr><td class="center">12</td><td class="center">0.333</td><td class="center">15.0</td><td class="center">+15.0</td></tr>
+          <tr><td class="center">11</td><td class="center">0.306</td><td class="center">16.3</td><td class="center">+13.4</td></tr>
+          <tr><td class="center">10</td><td class="center">0.278</td><td class="center">18.0</td><td class="center">+11.7</td></tr>
+          <tr><td class="center">9</td><td class="center">0.250</td><td class="center">20.0</td><td class="center">+10.0</td></tr>
+          <tr><td class="center">8</td><td class="center">0.222</td><td class="center">22.5</td><td class="center">+8.3</td></tr>
+          <tr><td class="center">7</td><td class="center">0.194</td><td class="center">25.8</td><td class="center">+6.7</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="figure-caption">Figure 7.1 -- City payback periods and cumulative additional production by turn 60. Upgrading high-pip settlements recovers cost in roughly 13 to 16 turns.</div>
+  </div>
+
+  <h3>City vs. New Settlement</h3>
+  <p>The alternative to a city (5 resources, 1 net VP) is usually a new settlement (4 resources plus road costs, 1 VP, access to new production terrain). Which is the better VP investment?</p>
+  <p>When quality settlement locations are still available, expansion often wins in the first half of the game because it opens new terrain and new resource types. When the board is filled and remaining locations are low-pip, cities win because the upgrade cost is lower than the combined road and settlement cost, and because the high-pip base amplifies the return. A useful rule of thumb: cities become the better VP path once your next available settlement location drops below 8 pips.</p>
+
+  <div class="callout">
+    <strong>General Rule</strong>
+    Build cities preferentially when (a) the settlement being upgraded has 10 or more pips, (b) the game is past the midpoint so fewer productive turns remain to recoup a new settlement's investment, and (c) strong new settlement locations are unavailable. Build new settlements when (a) quality locations remain, (b) you need resource types your current economy cannot produce, and (c) you have the wood and brick to expand roads without depleting ore and grain reserves.
+  </div>
+
+  <h3>The City Rush Strategy</h3>
+  <p>Pursuing 5 cities as the primary path to 10 victory points requires 15 ore and 10 grain in total. Against a game with roughly 54 productive turns, you need to generate about 25 resources of combined ore and grain (accounting for other necessary builds) at a joint production rate of at least (25/54) x 36 = 16.7 combined pips across your ore and grain hexes. That requires roughly two high-value tokens on those resources -- a strong 8 on ore and a strong 6 on grain, for instance.</p>
+  <p>City rush is powerful precisely because it concentrates production into two hexes and one resource pair, enabling a fast and predictable VP path. It is vulnerable because both key hexes become high-value robber targets, and because any trade embargo on ore or grain by attentive opponents can stall the strategy entirely.</p>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART III                                                     -->
+<!-- ============================================================ -->
+
+<div class="part-header" id="part3">
+  <div class="part-num">Part III</div>
+  <h2>Resource Flow and Economic Efficiency</h2>
+  <p>How resources move through your economy, where they get stuck, and how to eliminate waste at every stage.</p>
+</div>
+
+<!-- CHAPTER 8 -->
+<div class="chapter" id="ch8">
+  <div class="chapter-label">Chapter 8</div>
+  <h2>Production Rates and Bottlenecks</h2>
+
+  <p>Chapters 4 through 7 focused on the per-settlement level: how good is this vertex, when should I upgrade it? Part III zooms out to the whole economy. A complete production picture requires treating all of your settlements and cities together as a single system and asking where the flow of resources is constrained. That question is the domain of bottleneck analysis.</p>
+
+  <h3>Modeling Your Production as a Flow</h3>
+  <p>Define your production rate for resource type R as the sum of pip values across all hexes producing R, divided by 36, multiplied by the appropriate settlement or city factor (1 for settlements, 2 for cities):</p>
+
+  <div class="math-block">Rate(R)  =  [ sum of (pips_i x multiplier_i) for all hexes i producing R ] / 36</div>
+
+  <p>This gives you expected resources per turn for each type. Your full economy can then be expressed as a five-element production vector. For example: [wood: 0.194, brick: 0.167, ore: 0.278, grain: 0.222, sheep: 0.111]. Reading this vector tells you immediately where production is strong and where you are likely to experience chronic shortages.</p>
+
+  <h3>Identifying the Bottleneck</h3>
+  <p>A bottleneck is the resource whose production rate is lowest relative to the rate at which your strategy consumes it. The concept comes from manufacturing theory, where a production line's maximum output is always constrained by its slowest stage. The same logic applies to Catan economies.</p>
+
+  <div class="figure" id="fig8_1">
+    <div class="figure-body" style="padding:0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Strategy archetype</th>
+            <th>Primary bottleneck</th>
+            <th>Secondary bottleneck</th>
+            <th>Minimum pip target</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Expansion</strong> (roads and settlements)</td>
+            <td>Wood</td>
+            <td>Brick</td>
+            <td>At least 6 pips each of wood and brick</td>
+          </tr>
+          <tr>
+            <td><strong>City rush</strong></td>
+            <td>Ore</td>
+            <td>Grain</td>
+            <td>At least 9 ore pips, 6 grain pips</td>
+          </tr>
+          <tr>
+            <td><strong>Development card focus</strong></td>
+            <td>Ore and grain equally</td>
+            <td>Sheep</td>
+            <td>At least 5 pips each of ore, grain, and sheep</td>
+          </tr>
+          <tr>
+            <td><strong>Mixed / flexible</strong></td>
+            <td>Context-dependent</td>
+            <td>--</td>
+            <td>At least 10 total across ore and grain; 10 across wood and brick</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="figure-caption">Figure 8.1 -- Bottleneck analysis by strategic archetype. Pip targets are competitive minimums for a four-player game.</div>
+  </div>
+
+  <h3>The Inventory Problem and Discard Risk</h3>
+  <p>Holding too many resources is dangerous. Any player holding eight or more cards when a 7 is rolled must discard half their hand, rounded down. Since 7 occurs with probability 6/36 on every roll, the probability of at least one 7 occurring within k turns is:</p>
+
+  <div class="math-block">P(at least one 7 in k turns)  =  1 - (30/36)^k  =  1 - (5/6)^k</div>
+
+  <div class="figure" id="fig8_2">
+    <div class="figure-body" style="padding:0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="center">Turns at 8+ cards</th>
+            <th class="center">P(at least one 7)</th>
+            <th class="center">Expected cards lost (if 8 held)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="center">1</td><td class="center">16.7%</td><td class="center">0.67</td></tr>
+          <tr><td class="center">2</td><td class="center">30.6%</td><td class="center">1.22</td></tr>
+          <tr><td class="center">3</td><td class="center">42.1%</td><td class="center">1.69</td></tr>
+          <tr><td class="center hi">4</td><td class="center hi">51.8%</td><td class="center hi">2.07</td></tr>
+          <tr><td class="center">5</td><td class="center">59.8%</td><td class="center">2.39</td></tr>
+          <tr><td class="center">6</td><td class="center">66.5%</td><td class="center">2.66</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="figure-caption">Figure 8.2 -- Discard risk by number of consecutive turns holding 8 or more cards. By turn 4, a player is more likely than not to have discarded. Expected cards lost assumes 4 cards discarded per 7 (from an 8-card hand).</div>
+  </div>
+
+  <p>The decision rule this implies: if you are holding 7 or more cards and can spend resources on any productive build -- even a slightly suboptimal one -- the expected cost of the forced discard usually exceeds the inefficiency of the suboptimal spend. Build early rather than wait for the perfect moment, particularly in the midgame when 7s are actively being used offensively.</p>
+
+  <div class="example-box">
+    <strong>Example 8.1 -- Spend Now or Wait?</strong>
+    You hold 7 cards and need one more sheep to complete a settlement. Option A: wait one turn, risking a 7 (16.7% chance of losing roughly 3 to 4 cards). Expected cost: 0.167 x 3.5 = 0.58 resources. Option B: trade 2 grain for 1 sheep at a 2:1 grain port right now, costing 1 extra resource but eliminating the discard risk entirely.<br><br>
+    At 8 cards, Option B is almost always superior. The 1-resource trade premium is smaller than the 0.58-resource expected discard cost -- and the discard cost grows with each subsequent turn you continue to hold. The mathematics strongly favor spending to stay below the discard threshold.
+  </div>
+</div>
+
+
+<!-- CHAPTER 9 -->
+<div class="chapter" id="ch9">
+  <div class="chapter-label">Chapter 9</div>
+  <h2>Ports and Exchange Rates: Trading vs. Arbitrage</h2>
+
+  <p>Trading with other players is Catan's most visible social mechanic, but it is also an economic one. Every trade has a rate, and every rate can be compared to a benchmark. Ports provide that benchmark: a fixed price list available to any player who has settled the right coastal vertex. This chapter analyzes port value quantitatively and introduces the concept of arbitrage within the Catan economy.</p>
+
+  <h3>Port Types and Exchange Rates</h3>
+  <p>The standard board contains nine port locations: five specialty 2:1 ports (one for each resource type) and four generic 3:1 ports. Without port access, the bank's default rate is 4:1. The efficiency gains from port access are substantial:</p>
+
+  <div class="figure" id="fig9_1">
+    <div class="figure-body" style="padding:0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Port type</th>
+            <th class="center">Rate</th>
+            <th class="center">Resources paid per 1 acquired</th>
+            <th class="center">Efficiency vs. 4:1 bank</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>2:1 specialty (matching resource)</strong></td><td class="center">2 for 1</td><td class="center">2</td><td class="center hi">50% savings</td></tr>
+          <tr><td><strong>3:1 generic</strong></td><td class="center">3 for 1</td><td class="center">3</td><td class="center">25% savings</td></tr>
+          <tr><td><strong>4:1 bank</strong></td><td class="center">4 for 1</td><td class="center">4</td><td class="center">Baseline</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="figure-caption">Figure 9.1 -- Port exchange rates and efficiency gains relative to the default 4:1 bank rate.</div>
+  </div>
+
+  <h3>Quantifying Port Value</h3>
+  <p>The value of a 2:1 specialty port depends directly on how much of the matching resource you produce. If you produce ore at a rate of 10 pips (0.278 resources per turn) and use the ore port to acquire grain, you receive effective grain at a rate of 0.139 resources per turn -- equivalent to the output of a 5-pip grain hex -- from conversion alone. The ore port is worth approximately 5 virtual grain pips per turn in that configuration.</p>
+  <p>More generally, a 2:1 port for resource R, given your production rate r of R, provides:</p>
+
+  <div class="math-block">Effective acquired resource rate  =  r / 2   resources per turn</div>
+
+  <p>This is the contribution of the port beyond what your existing production already provides. For a player with r = 0.25 (9 pips of a matching resource), a 2:1 port generates 0.125 effective resources of any other type per turn -- roughly equivalent to a 4.5-pip hex. That is a significant ongoing benefit for a one-time settlement investment.</p>
+
+  <h3>The Road to a Port: Is It Worth Building?</h3>
+  <p>Settling on a port vertex requires either placing an initial settlement there or building roads to reach it during the game. A two-road investment (2 wood + 2 brick = 4 resources) to access a 2:1 port is efficient if the port will be used more than a handful of times. Using the valuation above:</p>
+
+  <div class="math-block">Breakeven uses  =  Road cost / savings per use  =  4 / 1  =  4 conversions</div>
+
+  <p>If your production rate is r = 0.25 of the matching resource per turn and you convert all surplus (say, half of production), you perform approximately 0.125 conversions per turn. The 4-resource road investment pays back in about 32 turns of production -- which is within the range of a typical game. If you will use the port more frequently -- because you overproduce the matching resource significantly -- payback is faster and the investment is more clearly worthwhile.</p>
+
+  <h3>Arbitrage: Exploiting Price Differences</h3>
+  <p>In financial markets, arbitrage is the practice of simultaneously exploiting price discrepancies across markets to earn a risk-free profit. In Catan, a constrained form of arbitrage exists when player-to-player trade rates diverge from port rates.</p>
+  <p>Consider: a desperate opponent offers you 2 grain for 1 ore. You hold a 2:1 grain port. Your grain costs you 2 grain to convert into 1 of anything -- but in this deal, you receive 2 grain for 1 ore and can immediately convert that grain at the port into 1 additional resource. The effective rate of your deal is 1 ore for 1 ore plus 1 of anything -- a better-than-even outcome.</p>
+  <p>More precisely: whenever an opponent's offer implies a resource valuation different from your port's implicit price, there is an arbitrage opportunity. A player who recognizes these discrepancies and structures trades to exploit them extracts real value that does not appear in their production statistics.</p>
+
+  <div class="callout">
+    <strong>Practical Framing</strong>
+    You do not need to run numbers in real time to apply this thinking. The simpler version: identify which resource is currently most scarce at the table (other players' desperation reveals this through their offers), and trade to supply exactly that resource in exchange for whatever you most need. Port access means your supply of the matching resource is effectively unlimited relative to others -- price accordingly.
+  </div>
+
+  <h3>Port Locking: A Strategic Denial</h3>
+  <p>Each port's two coastal settlement vertices are a shared resource. The first player to settle one of them claims port access; if they later settle the second vertex of the same port, they lock all opponents out of that port permanently. Port locking is a form of territorial control with a calculable value: the denied opponent must pay 3:1 or 4:1 for everything the locked resource could have provided at 2:1. Over a game with 10 conversions, the efficiency loss to the locked opponent is approximately 10 additional resources -- a material disadvantage. Port locking is most worth pursuing when the port matches a resource you already produce abundantly and when a second settlement there provides acceptable production score in its own right.</p>
+</div>
+
+
+<!-- CHAPTER 10 -->
+<div class="chapter" id="ch10">
+  <div class="chapter-label">Chapter 10</div>
+  <h2>Development Cards: Probability and Expected Value</h2>
+
+  <p>Development cards are the one significant element of Catan's economy that operates outside the dice-and-hex production framework. They cost a fixed mix of resources to acquire, they arrive with unknown contents drawn from a shuffled deck, and they provide effects ranging from mild (a single Knight) to game-altering (a Monopoly played on a well-stocked opponent). Understanding the deck's composition and how draw probabilities shift over the course of a game gives a material informational edge.</p>
+
+  <h3>Deck Composition</h3>
+  <p>The standard development card deck contains 25 cards, distributed as follows:</p>
+
+  <div class="figure" id="fig10_1">
+    <div class="figure-body" style="padding:0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Card type</th>
+            <th class="center">Count</th>
+            <th class="center">Share of deck</th>
+            <th>Primary function</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Knight</strong></td><td class="center">14</td><td class="center hi">56.0%</td><td>Move the robber; steal one card; contributes to Largest Army</td></tr>
+          <tr><td><strong>Victory Point</strong></td><td class="center">5</td><td class="center">20.0%</td><td>1 VP, secret until revealed at 10 points</td></tr>
+          <tr><td><strong>Road Building</strong></td><td class="center">2</td><td class="center">8.0%</td><td>Place two free roads immediately</td></tr>
+          <tr><td><strong>Year of Plenty</strong></td><td class="center">2</td><td class="center">8.0%</td><td>Take any two resources from the bank</td></tr>
+          <tr><td><strong>Monopoly</strong></td><td class="center">2</td><td class="center">8.0%</td><td>Collect all of one resource type from all players</td></tr>
+          <tr><td><strong>Total</strong></td><td class="center"><strong>25</strong></td><td class="center"><strong>100%</strong></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="figure-caption">Figure 10.1 -- Standard Catan development card deck composition. Knights dominate the deck at 14 of 25 cards.</div>
+  </div>
+
+  <h3>Draw Probabilities as Cards Leave the Deck</h3>
+  <p>When you buy a development card early in the game, the deck is essentially full and draw probabilities match the composition percentages above. As cards are purchased throughout the game, the remaining deck composition shifts -- and tracking that shift gives you meaningful information about what you (or opponents) are likely to draw.</p>
+  <p>The relevant probability model is the hypergeometric distribution, which describes drawing without replacement from a finite population. If k cards of a certain type remain in a deck of size N, the probability of drawing one on your next purchase is simply k/N.</p>
+
+  <div class="example-box">
+    <strong>Example 10.1 -- Late-Game Draw Probabilities</strong>
+    It is midgame. Ten development cards have been purchased by all players. Of those: eight were Knights (all played openly), one was a Road Building card (played), and one was a Victory Point card (now showing). The remaining deck contains 25 - 10 = 15 cards.<br><br>
+    Remaining by type: Knights = 14 - 8 = 6. Victory Points = 5 - 1 = 4. Road Building = 2 - 1 = 1. Year of Plenty = 2. Monopoly = 2.<br><br>
+    P(draw Knight) = 6/15 = 40.0%. P(draw Victory Point) = 4/15 = 26.7%. P(draw action card) = 5/15 = 33.3%.<br><br>
+    The VP probability has risen from its baseline of 20% to nearly 27%. If you need one more VP to win and are buying development cards as your path there, this is a meaningfully favorable situation. Track the deck.
+  </div>
+
+  <h3>Expected Value of a Development Card Purchase</h3>
+  <p>A development card costs 1 ore + 1 grain + 1 sheep: 3 resources in total. The expected value of each purchase depends on deck state, but in the early game from a full deck, a rough calculation runs as follows:</p>
+  <p>A Knight is worth approximately 1.0 to 1.5 resource-equivalents in direct impact (robber repositioning plus theft), plus a fractional share of the Largest Army bonus (worth 2 VP, or about 10 resource-equivalents of VP value). A VP card is worth 1 VP, which at a cost-per-VP rate of roughly 5 resources implies a value of 5 resource-equivalents. Action cards (Road Building, Year of Plenty, Monopoly) typically provide 2 to 5 resource-equivalents of direct benefit. Weighting by probability:</p>
+
+  <div class="math-block">EV (full deck)  =  0.56 x ~2.0  +  0.20 x ~5.0  +  0.24 x ~3.5
+              =  1.12  +  1.00  +  0.84
+              =  ~3.0 resource-equivalents</div>
+
+  <p>Against a cost of 3 resources, this suggests development cards are approximately break-even in isolation -- which understates their value, because VP cards and Largest Army remain hidden until the winning moment, and because action cards often produce above their average impact against a specific opponent situation. Development cards are generally efficient purchases; the question is always whether the 3-resource cost could build something more urgent right now.</p>
+
+  <h3>Largest Army: The Most Efficient VP Path</h3>
+  <p>Largest Army awards 2 bonus VP to the first player to play at least 3 Knights, maintained as long as they hold the record. Since Knights represent 56% of the deck, the race for Largest Army begins implicitly with the first development card purchase.</p>
+  <p>The minimum investment to claim Largest Army from scratch: 3 Knights, requiring at least 3 development card purchases. At 3 resources per card, that is 9 resources for 2 VP -- a rate of 4.5 resources per VP. Compare: cities cost 5 resources per 1 net VP (5.0 resources per VP), and settlements plus road costs run 6 to 8 resources per VP. Largest Army is the most resource-efficient VP source in the game when achieved at minimum cost, which is why competitors who purchase development cards aggressively and track the Knight count are consistently difficult to contain.</p>
+
+  <div class="callout">
+    <strong>The Hidden VP Asymmetry</strong>
+    Victory Point cards are secret until the game ends. A player at 7 visible VPs who holds 3 hidden VP cards is actually at 10 and can declare victory immediately. Other players, unable to see this, may be spending resources suppressing a player at 8 or 9 visible VPs while the quiet accumulator of VP cards wins on their next turn. Tracking how many development cards each player has purchased -- not just how many they have played -- gives the best available signal of hidden VP accumulation. Five purchased but unplayed cards in one player's hand should raise attention regardless of their visible score.
+  </div>
+</div>
+
 </main>
 
 <script>
-// Highlight active sidebar entry based on scroll position
 const entries = document.querySelectorAll('#sidebar .toc-entry:not(.pending)');
-const sections = Array.from(entries).map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+const sections = Array.from(entries)
+  .map(a => document.querySelector(a.getAttribute('href')))
+  .filter(Boolean);
+
 window.addEventListener('scroll', () => {
   let cur = sections[0];
   sections.forEach(s => { if (window.scrollY + 80 >= s.offsetTop) cur = s; });
   entries.forEach(a => {
     a.classList.toggle('active', a.getAttribute('href') === '#' + cur.id);
   });
-}, {passive: true});
+}, { passive: true });
 </script>
+
 </body>
 </html>
